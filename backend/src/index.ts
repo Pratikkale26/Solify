@@ -1,14 +1,20 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { Keypair } from '@solana/web3.js';
+import { Keypair, Transaction, Connection } from '@solana/web3.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+//@ts-ignore
+import base58 from 'base58'
+import cors from 'cors'
 
 dotenv.config();
 
+const connection = new Connection(process.env.RPC_URL || "https://api.devnet.solana.com")
+
 const app = express();
 app.use(express.json());
+app.use(cors())
 const client = new PrismaClient();
 
 // Signup
@@ -35,7 +41,7 @@ app.post('/signup', async (req: Request, res: Response) => {
             username,
             password: hashedPassword,
             publicKey: keypair.publicKey.toString(),
-            privateKey: keypair.secretKey.toString()
+            privateKey: keypair.secretKey.toString() // TODO: dumbest approah of all i thought earlier
         }
     });
 
@@ -79,7 +85,25 @@ app.post('/api/v1/signin', async (req: Request, res: Response) => {
 
 // transaction signing
 app.post('/api/v1/txn/sign', async (req: Request, res: Response) => {
+    const serializeTxn = req.body.message;
 
+    const txn = Transaction.from(Buffer.from(serializeTxn))
+
+    // const user= await client.user.findFirst({
+    //     where:{
+    //         id: ""
+    //     }
+    // })
+
+    // TODO: here i am randomly generating the pvt-pub keypair but, need to write the logic to sign it with the keypair of that user 
+
+    const keypair = Keypair.fromSecretKey(base58.decode(process.env.PRIVATE_KEY))
+    txn.sign(keypair)
+    const {blockhash} = await connection.getLatestBlockhash()
+    txn.recentBlockhash = blockhash,
+    txn.feePayer = keypair.publicKey
+
+    await connection.sendTransaction(txn, [keypair])
     res.json({ message: "Transaction Done!" });
 });
 
