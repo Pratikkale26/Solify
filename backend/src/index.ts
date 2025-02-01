@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 //@ts-ignore
 import base58 from 'base58'
 import cors from 'cors'
+import { authMiddleware, AuthRequest } from './authmiddleware'
 
 dotenv.config();
 
@@ -84,28 +85,43 @@ app.post('/api/v1/signin', async (req: Request, res: Response) => {
 });
 
 // transaction signing
-app.post('/api/v1/txn/sign', async (req: Request, res: Response) => {
-    const serializeTxn = req.body.message;
+app.post('/api/v1/txn/sign', authMiddleware, async (req: AuthRequest, res: Response) => {
+    const { message } = req.body;
+    const username = req.user?.username;
 
-    const txn = Transaction.from(Buffer.from(serializeTxn))
+    if (!username) {
+        res.status(400).json({ error: "unauthorized request sent, please sign in and try again" });
+        return
+    }
 
-    // const user= await client.user.findFirst({
-    //     where:{
-    //         id: ""
-    //     }
-    // })
+    try {
+        const user = await client.user.findUnique({ where: { username } });
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return
+        }
 
-    // TODO: here i am randomly generating the pvt-pub keypair but, need to write the logic to sign it with the keypair of that user 
+        // Decode the transaction message and sign it
+        const txn = Transaction.from(Buffer.from(message, "base64"));
 
-    const keypair = Keypair.fromSecretKey(base58.decode(process.env.PRIVATE_KEY))
-    txn.sign(keypair)
-    const {blockhash} = await connection.getLatestBlockhash()
-    txn.recentBlockhash = blockhash,
-    txn.feePayer = keypair.publicKey
+        const keypair = Keypair.fromSecretKey(base58.decode(user.privateKey)); // sign with the user's private key
+        txn.sign(keypair);
 
-    await connection.sendTransaction(txn, [keypair])
-    res.json({ message: "Transaction Done!" });
+        // Get the latest blockhash and set it on the transaction
+        const { blockhash } = await connection.getLatestBlockhash();
+        txn.recentBlockhash = blockhash;
+        txn.feePayer = keypair.publicKey;
+
+        const signature = await connection.sendTransaction(txn, [keypair]);
+        
+        res.json({ message: "Transaction Signed & Sent!", signature });
+    } catch (error: any) {
+        console.error("Error signing transaction:", error);
+        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
 });
+
+
 
 // getting transactions
 app.get('/api/v1/txn', async (req: Request, res: Response) => {
