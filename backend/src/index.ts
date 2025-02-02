@@ -19,7 +19,7 @@ app.use(cors())
 const client = new PrismaClient();
 
 // Signup
-app.post('/signup', async (req: Request, res: Response) => {
+app.post('/api/v1/signup', async (req: Request, res: Response) => {
     const { username, password } = req.body;
     if (!username || !password) {
         res.status(400).json({
@@ -81,7 +81,7 @@ app.post('/api/v1/signin', async (req: Request, res: Response) => {
         id: username
     }, process.env.JWT_SECRET);
 
-    res.json({ token, message: "Signed in successfully" });
+    res.json({ token, publicKey: user.publicKey, message: "Signed in successfully" });
 });
 
 // transaction signing
@@ -90,7 +90,7 @@ app.post('/api/v1/txn/sign', authMiddleware, async (req: AuthRequest, res: Respo
     const username = req.user?.username;
 
     if (!username) {
-        res.status(400).json({ error: "unauthorized request sent, please sign in and try again" });
+        res.status(400).json({ error: "Unauthorized request sent, please sign in and try again" });
         return
     }
 
@@ -103,7 +103,6 @@ app.post('/api/v1/txn/sign', authMiddleware, async (req: AuthRequest, res: Respo
 
         // Decode the transaction message and sign it
         const txn = Transaction.from(Buffer.from(message, "base64"));
-
         const keypair = Keypair.fromSecretKey(base58.decode(user.privateKey)); // sign with the user's private key
         txn.sign(keypair);
 
@@ -112,15 +111,23 @@ app.post('/api/v1/txn/sign', authMiddleware, async (req: AuthRequest, res: Respo
         txn.recentBlockhash = blockhash;
         txn.feePayer = keypair.publicKey;
 
-        const signature = await connection.sendTransaction(txn, [keypair]);
-        
+        // Send the transaction
+        const signature = await connection.sendTransaction(txn, [keypair], { skipPreflight: false, preflightCommitment: "processed" });
+
+        // Optionally confirm the transaction
+        const confirmation = await connection.confirmTransaction(signature, "processed");
+
+        if (confirmation.value.err) {
+            res.status(500).json({ error: "Transaction failed", details: confirmation.value.err });
+            return
+        }
+
         res.json({ message: "Transaction Signed & Sent!", signature });
     } catch (error: any) {
         console.error("Error signing transaction:", error);
         res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
 });
-
 
 
 // getting transactions

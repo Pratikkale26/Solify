@@ -6,7 +6,7 @@ export interface AuthRequest extends Request {
 }
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = localStorage.getItem("token")
 
     if (!token) {
         res.status(401).json({ error: "Unauthorized: No token provided" });

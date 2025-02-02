@@ -1,86 +1,41 @@
-import axios from "axios";
-import { Connection, PublicKey, SystemProgram, LAMPORTS_PER_SOL, Transaction } from "@solana/web3.js";
-import { useRef } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Navbar from "./components/Navbar";
+import AuthForm from "./components/AuthForm";
+import SendSol from "./components/SendSol";
+import Features from "./components/Features";
+import LandingPage from "./components/LandingPage";
+import BuyNFT from "./components/BuyNFT";
+import StakeSol from "./components/StakeSol";
+import TransactionHistory from "./components/TransactionHistory";
 
-const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || "https://api.devnet.solana.com");
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-function App() {
-  const toRef = useRef<HTMLInputElement>(null);
-  const amountRef = useRef<HTMLInputElement>(null);
-
-  async function createTransaction() {
-    const toAddress = toRef.current?.value;
-    const amount = amountRef.current?.value;
-    if (!toAddress || !amount) {
-      alert("Please enter recipient address and amount");
-      return;
-    }
-
-    try {
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: new PublicKey("GJncGZ4PmX9YNWRZSDSHinH6Ahbs4rxqN28ukBFFQ7i6"), // Replace with your bot's Solana address
-          toPubkey: new PublicKey(toAddress),
-          lamports: Number(amount) * LAMPORTS_PER_SOL,
-        })
-      );
-
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new PublicKey("GJncGZ4PmX9YNWRZSDSHinH6Ahbs4rxqN28ukBFFQ7i6"); // Same as bot's address
-
-      const serializedTx = transaction.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false,
-      });
-
-      const encodedTx = Buffer.from(serializedTx).toString("base64");
-
-      await axios.post("http://localhost:3000/api/v1/txn/sign", {
-        message: encodedTx,
-        retry: false,
-      });
-
-      console.log("Transaction serialized & sent to backend:", encodedTx);
-    } catch (error) {
-      console.error("Failed to create transaction:", error);
-    }
-  }
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-2xl font-semibold mb-6">BonkBot - Swap SOL</h1>
-
-      <div className="w-full max-w-md bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div className="mb-4">
-          <label className="block text-gray-300 mb-1">Amount (SOL)</label>
-          <input 
-            type="text" 
-            placeholder="Enter amount" 
-            ref={amountRef} 
-            className="w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+    <Router>
+      <div className="bg-gray-900 min-h-screen">
+        <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+        <div className="pt-16">
+          <Routes>
+            <Route path="/" element={isAuthenticated ? <Navigate to="/features" /> : <LandingPage />} />
+            <Route path="/signin" element={isAuthenticated ? <Navigate to="/features" /> : <AuthForm setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/signup" element={isAuthenticated ? <Navigate to="/features" /> : <AuthForm setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/features" element={isAuthenticated ? <Features /> : <Navigate to="/signin" />} />
+            <Route path="/send-sol" element={isAuthenticated ? <SendSol /> : <Navigate to="/signin" />} />
+            <Route path="/buy-nft" element={isAuthenticated ? <BuyNFT /> : <Navigate to="/signin" />} />
+            <Route path="/stake-sol" element={isAuthenticated ? <StakeSol /> : <Navigate to="/signin" />} />
+            <Route path="/transactions" element={isAuthenticated ? <TransactionHistory /> : <Navigate to="/signin" />} />
+          </Routes>
         </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-300 mb-1">Recipient Address</label>
-          <input 
-            type="text" 
-            placeholder="Enter address" 
-            ref={toRef} 
-            className="w-full p-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <button 
-          onClick={createTransaction} 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-md transition duration-200"
-        >
-          Submit
-        </button>
       </div>
-    </div>
+    </Router>
   );
-}
+};
 
 export default App;
