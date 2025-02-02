@@ -5,11 +5,11 @@ const nftCollection = [
   { id: 1, name: "CryptoPunk #26", price: "2.5 SOL", image: "https://miro.medium.com/v2/resize:fit:1400/1*309P7s3s2nauQM_-MQU6Pg.png" },
   { id: 2, name: "Carsow #20", price: "180 SOL", image: "https://riseangle.com/storage/events/uKfhTk8kOKKDqLvl06Xm2IFDvcdbmrKSrevj1WSf.gif" },
   { id: 3, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
-  { id: 4, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
-  { id: 5, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
-  { id: 6, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
-  { id: 7, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
-  { id: 8, name: "Degen Ape", price: "3.2 SOL", image: "https://miro.medium.com/v2/resize:fit:273/1*mwaCSzH_te-zFs60913Afw.png" },
+  { id: 4, name: "Hulaa #3", price: "4.2 SOL", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfGYRkgakscA1_XXsmvRjP7Gdl-pqqMFeOKA&s" },
+  { id: 5, name: "Smarto", price: "3.8 SOL", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfI78_nLJ0kRsYoTwZwtzMZo1jvdul6360dQ&s" },
+  { id: 6, name: "duck", price: "8.2 SOL", image: "https://i.imgur.com/bMH6qNc.png" },
+  { id: 7, name: "Berus", price: "320 SOL", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBXtXscauJnhxqx-XqzALyBvseEhQYxqX8-w&s" },
+  { id: 8, name: "gam gomu ", price: "3.2 SOL", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3P8S2W40HwQapVhGz_6bQ9sV_i5YA0lMjjA&s" },
 ];
 
 const BuyNFT = () => {

@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 
 const features = [
   { name: "Send SOL", path: "/send-sol", description: "Transfer SOL to any wallet.", color: "bg-blue-500" },
-  { name: "AirDrop SOL (Devnet)", path: "/airdrop", description: "Airdrop SOL in your account.", color: "bg-orange-500" },
   { name: "Check Balance", path: "/balance", description: "Check how much solana someone has.", color: "bg-amber-500" },
+  { name: "AirDrop SOL (Devnet)", path: "/airdrop", description: "Airdrop SOL in your account.", color: "bg-orange-500" },
   { name: "Buy NFT", path: "/buy-nft", description: "Purchase NFTs directly.", color: "bg-purple-500" },
   { name: "Stake SOL", path: "/stake-sol", description: "Earn rewards by staking.", color: "bg-green-500" },
-  { name: "Transaction History", path: "/transactions", description: "View your past transactions.", color: "bg-yellow-500" },
+  { name: "Transaction History", path: "/transactions", description: "View your past transactions.", color: "bg-blue-500" },
 ];
 
 const Features = () => {
