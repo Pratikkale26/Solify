@@ -61,6 +61,8 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }: NavbarProps) => {
               </div>
             )}
 
+            
+
             <Link to="/send-sol" className="px-4 py-2 bg-green-600 rounded-lg hover:bg-green-700 transition">
               Send SOL
             </Link>

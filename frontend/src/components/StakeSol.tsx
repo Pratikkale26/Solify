@@ -1,15 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiLoader, FiCheckCircle } from "react-icons/fi";
+import axios from "axios";
 
 const StakeSol = () => {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [staked, setStaked] = useState(false);
-  const userBalance = 10.5; // TODO: fetch dynamically, for now hardcoded
+  const [userBalance, setUserBalance] = useState<number>(0);
+
+  // Fetch the user's balance from the backend
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          toast.error("No token found. Please sign in.");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:3000/api/v1/balance", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token to the request header
+          },
+        });
+
+        console.log(response);
+        setUserBalance(response.data.balance);
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+        toast.error("Error fetching balance.");
+      }
+    };
+
+    fetchBalance();
+  }, []);
 
   const handleStake = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
+    if (!amount || parseFloat(amount) <= 0.00000001) {
       toast.error("Please enter a valid amount");
       return;
     }

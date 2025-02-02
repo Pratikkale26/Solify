@@ -8,6 +8,8 @@ import LandingPage from "./components/LandingPage";
 import BuyNFT from "./components/BuyNFT";
 import StakeSol from "./components/StakeSol";
 import TransactionHistory from "./components/TransactionHistory";
+import AirdropSOL from "./components/AirdropSol";
+import WalletBalance from "./components/WalletBalance";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -31,6 +33,8 @@ const App = () => {
             <Route path="/buy-nft" element={isAuthenticated ? <BuyNFT /> : <Navigate to="/signin" />} />
             <Route path="/stake-sol" element={isAuthenticated ? <StakeSol /> : <Navigate to="/signin" />} />
             <Route path="/transactions" element={isAuthenticated ? <TransactionHistory /> : <Navigate to="/signin" />} />
+            <Route path="/airdrop" element={isAuthenticated ? <AirdropSOL /> : <Navigate to="/signin" />} />
+            <Route path="/balance" element={isAuthenticated ? <WalletBalance /> : <Navigate to="/signin" />} />
           </Routes>
         </div>
       </div>
