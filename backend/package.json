@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "@types/node": "^22.13.1",
     "prisma": "6.2.1"
   }
 }
