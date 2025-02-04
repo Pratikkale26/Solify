@@ -4,7 +4,7 @@ import { Keypair, Transaction, Connection, PublicKey, LAMPORTS_PER_SOL } from '@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import bs58 from 'bs58';
+const bs58 = require('bs58');
 import cors from 'cors';
 import { authMiddleware, AuthRequest } from './authmiddleware';
 

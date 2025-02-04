@@ -18,7 +18,7 @@ const web3_js_1 = require("@solana/web3.js");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const bs58_1 = __importDefault(require("bs58"));
+const bs58 = require('bs58');
 const cors_1 = __importDefault(require("cors"));
 const authmiddleware_1 = require("./authmiddleware");
 dotenv_1.default.config();
@@ -46,7 +46,7 @@ app.post('/api/v1/signup', (req, res) => __awaiter(void 0, void 0, void 0, funct
             username,
             password: hashedPassword,
             publicKey: keypair.publicKey.toBase58(),
-            privateKey: bs58_1.default.encode(keypair.secretKey)
+            privateKey: bs58.encode(keypair.secretKey)
         }
     });
     res.json({ publicKey: keypair.publicKey.toBase58() });
@@ -90,7 +90,7 @@ app.post('/api/v1/txn/sign', authmiddleware_1.authMiddleware, (req, res) => __aw
             res.status(404).json({ error: "User not found" });
             return;
         }
-        const keypair = web3_js_1.Keypair.fromSecretKey(new Uint8Array(bs58_1.default.decode(user.privateKey)));
+        const keypair = web3_js_1.Keypair.fromSecretKey(new Uint8Array(bs58.decode(user.privateKey)));
         // get latest blockhash
         const { blockhash } = yield connection.getLatestBlockhash();
         // add blockhash and feepayer to txn
