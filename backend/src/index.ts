@@ -15,8 +15,11 @@ const connection = new Connection(process.env.RPC_URL || "https://api.devnet.sol
 const app = express();
 app.use(cors({
     origin: ["http://localhost:5173", "https://solify.kalehub.com"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 }));
+app.options("*", cors())
 
 app.use(express.json());
 const client = new PrismaClient();
