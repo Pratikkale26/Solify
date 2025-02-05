@@ -13,8 +13,12 @@ dotenv.config();
 const connection = new Connection(process.env.RPC_URL || "https://api.devnet.solana.com");
 
 const app = express();
+app.use(cors({
+    origin: ["http://localhost:5173", "https://solify.kalehub.com"],
+    credentials: true,
+}));
+
 app.use(express.json());
-app.use(cors());
 const client = new PrismaClient();
 
 // Signup

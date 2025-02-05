@@ -20,7 +20,7 @@ const StakeSol = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:3000/api/v1/balance", {
+        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/balance`, {
           headers: {
             Authorization: `Bearer ${token}`, // Add the token to the request header
           },

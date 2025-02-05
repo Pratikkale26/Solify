@@ -24,7 +24,7 @@ const AuthForm = ({ setIsAuthenticated }: AuthFormProps) => {
 
     try {
       const url = isSignup ? "/api/v1/signup" : "/api/v1/signin";
-      const response = await axios.post(`http://localhost:3000${url}`, { username, password });
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}${url}`, { username, password });
 
       if (!isSignup) {
         localStorage.setItem("token", response.data.token);

@@ -63,7 +63,7 @@ const SendSol = () => {
       }
 
       const res = await axios.post(
-        "http://localhost:3000/api/v1/txn/sign",
+        `${import.meta.env.VITE_SERVER_URL}/api/v1/txn/sign`,
         { message: encodedTx, retry: false },
         { headers: { Authorization: `Bearer ${token}` } }
       );

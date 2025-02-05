@@ -17,7 +17,7 @@ const AirdropSOL = () => {
       setLoading(true);
       setMessage("");
 
-      const response = await axios.post("http://localhost:3000/api/v1/airdrop", { walletAddress });
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/airdrop`, { walletAddress });
 
       setMessage(`Airdrop successful! Txn: ${response.data.signature}`);
     } catch (error: any) {

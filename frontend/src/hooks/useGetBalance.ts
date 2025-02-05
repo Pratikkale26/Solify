@@ -16,7 +16,7 @@ const useGetBalance = (walletAddress: string) => {
       try {
         const token = localStorage.getItem("token")
         if(!token) return;
-        const response = await axios.get(`http://localhost:3000/api/v1/balance2?walletAddress=${walletAddress}`, {
+        const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/v1/balance2?walletAddress=${walletAddress}`, {
             headers:{
                 Authorization: `Bearer ${token}`, 
             }
